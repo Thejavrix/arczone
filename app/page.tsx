@@ -423,6 +423,11 @@ export default function LandingPage() {
 
           
         </div>
+        <div className="mt-12 flex items-center justify-center">
+  <p className="text-xs text-black tracking-wide">
+    Built by JAVRIX
+  </p>
+</div>
       </footer>
     </main>
   );

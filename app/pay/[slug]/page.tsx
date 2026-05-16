@@ -42,6 +42,7 @@ export default function PayPage() {
       expires_at?: string | null;
       tx_hash?: string;
       payer_address?: string;
+      note?: string;
     } | null>(null);
 
   const params = useParams();
@@ -105,17 +106,18 @@ export default function PayPage() {
     }
 
     async function markCompleted() {
-      const { error } =
-        await supabase
-          .from("payments")
-          .update({
-            status: "completed",
-            tx_hash: localTxHash,
-            payer_address: address,
-            paid_at:
-              new Date().toISOString(),
-          })
-          .eq("slug", payment.slug);
+      if (!payment) return;
+
+const { error } =
+  await supabase
+    .from("payments")
+    .update({
+      status: "completed",
+      tx_hash: localTxHash,
+      completed_at:
+        new Date().toISOString(),
+    })
+    .eq("slug", payment.slug);
 
       if (error) {
         toast.error(
