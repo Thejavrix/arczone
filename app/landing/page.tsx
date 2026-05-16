@@ -47,7 +47,7 @@ export default function LandingPage() {
           </div>
 
           <Link
-            href="/dashboard"
+            href="/"
             className="rounded-2xl bg-black text-white px-5 py-3 text-sm font-medium hover:opacity-90 transition-opacity"
           >
             Launch App
@@ -421,7 +421,12 @@ export default function LandingPage() {
             </p>
           </div>
 
-          
+          <Link
+            href="/"
+            className="rounded-2xl bg-black text-white px-5 py-3 text-sm font-medium w-fit"
+          >
+            Open Dashboard
+          </Link>
         </div>
       </footer>
     </main>
