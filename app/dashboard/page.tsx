@@ -65,63 +65,13 @@ export default function Home() {
   const [merchantName, setMerchantName] =
     useState("ARC Merchant");
 
-  const [merchantLogo, setMerchantLogo] =
-    useState("");
+  
 
   const [defaultExpiry, setDefaultExpiry] =
     useState("1h");
 
   useEffect(() => {
     setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    async function loadPayments() {
-  if (!address) {
-    setSavedPayments([]);
-    return;
-  }
-
-  const { data, error } =
-    await supabase
-      .from("payments")
-      .select("*")
-      .eq(
-        "merchant_address",
-        address
-      )
-      .order("created_at", {
-        ascending: false,
-      });
-
-  if (!error && data) {
-    setSavedPayments(data);
-  }
-}
-
-    loadPayments();
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(
-      async () => {
-        const { data } =
-          await supabase
-            .from("payments")
-            .select("*")
-            .order("created_at", {
-              ascending: false,
-            });
-
-        if (data) {
-          setSavedPayments(data);
-        }
-      },
-      5000
-    );
-
-    return () =>
-      clearInterval(interval);
   }, []);
 
   const { address, chain } =
@@ -131,6 +81,84 @@ export default function Home() {
     useBalance({
       address,
     });
+
+  useEffect(() => {
+  async function loadPayments() {
+    if (!address) {
+      setSavedPayments([]);
+
+      return;
+    }
+
+    const { data, error } =
+      await supabase
+        .from("payments")
+        .select("*")
+        .eq(
+          "merchant_address",
+          address
+        )
+        .order("created_at", {
+          ascending: false,
+        });
+
+    if (!error && data) {
+      setSavedPayments(data);
+    }
+  }
+
+  loadPayments();
+}, [address]);
+
+  useEffect(() => {
+  if (!address) return;
+
+  
+
+  const interval = setInterval(
+    async () => {
+      const { data } =
+        await supabase
+          .from("payments")
+          .select("*")
+          .eq(
+            "merchant_address",
+            address
+          )
+          .order("created_at", {
+            ascending: false,
+          });
+
+      if (data) {
+        setSavedPayments(data);
+      }
+    },
+    5000
+  );
+
+  return () =>
+    clearInterval(interval);
+}, [address]);
+
+useEffect(() => {
+  if (!address) {
+    setSavedPayments([]);
+
+    setSelectedPayment(null);
+  }
+}, [address]);
+
+
+
+
+
+
+
+    
+    
+  
+
+  
 
   const totalRevenue =
   address
@@ -179,7 +207,7 @@ const pendingPayments =
       />
       
 
-      <section className="flex-1 rounded-4xl border border-black/5 bg-white shadow-sm p-5 sm:p-8 overflow-hidden">
+       <div className="flex-1 rounded-4xl border border-black/5 bg-white shadow-sm p-5 sm:p-8 overflow-hidden">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <p className="text-sm text-black/50">
@@ -516,8 +544,11 @@ const pendingPayments =
                 <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
                   <div>
                     <p className="text-sm text-black/50">
-                      Payment Created
-                    </p>
+  {selectedPayment.status ===
+  "completed"
+    ? "Payment Completed"
+    : "Payment Created"}
+</p>
 
                     <h3 className="text-3xl font-semibold mt-2">
                       {
@@ -602,11 +633,12 @@ const pendingPayments =
                   No payments yet
                 </div>
               ) : (
-                savedPayments.map(
-                  (
-                    payment,
-                    index
-                  ) => (
+                address &&
+savedPayments.map(
+  (
+    payment,
+    index
+  ) => (
                     <div
                       key={index}
                       className="rounded-3xl border border-black/5 bg-neutral-50 p-5"
@@ -701,30 +733,7 @@ const pendingPayments =
                 />
               </div>
 
-              <div className="rounded-3xl border border-black/5 bg-neutral-50 p-5">
-                <p className="text-sm text-black/50">
-                  Merchant Logo URL
-                </p>
-
-                <Input
-                  value={merchantLogo}
-                  onChange={(e) =>
-                    setMerchantLogo(
-                      e.target.value
-                    )
-                  }
-                  placeholder="https://..."
-                  className="mt-4 h-12 rounded-2xl border-black/10 bg-white"
-                />
-
-                {merchantLogo && (
-                  <img
-                    src={merchantLogo}
-                    alt="Logo"
-                    className="mt-4 h-14 w-14 rounded-2xl object-cover border border-black/5"
-                  />
-                )}
-              </div>
+              
 
               <div className="rounded-3xl border border-black/5 bg-neutral-50 p-5">
                 <p className="text-sm text-black/50">
@@ -778,12 +787,17 @@ const pendingPayments =
                   Copy Wallet
                 </button>
               </div>
-            </div>
+                        </div>
+
+            
           </div>
         )}
         
-      </section>
+        
+      
+        
+      </div>
     </main>
-    
+
   );
 }
