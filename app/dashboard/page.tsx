@@ -33,6 +33,8 @@ export default function Home() {
   const [mounted, setMounted] =
     useState(false);
 
+    
+
   const [activeTab, setActiveTab] =
     useState("dashboard");
 
@@ -154,10 +156,24 @@ export default function Home() {
 
   return (
     <main className="flex flex-col lg:flex-row min-h-screen p-3 lg:p-4 gap-4 bg-[#F5F7FB]">
+      <div className="lg:hidden mb-5 flex items-center justify-between rounded-[28px] border border-black/5 bg-white p-5 shadow-sm">
+  <div>
+    <h1 className="text-2xl font-semibold tracking-tight">
+      ARCZONE
+    </h1>
+
+    <p className="mt-1 text-xs text-black/40">
+      ARC Payment Infrastructure
+    </p>
+  </div>
+
+  <ConnectButton />
+</div>
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
       />
+      
 
       <section className="flex-1 rounded-4xl border border-black/5 bg-white shadow-sm p-5 sm:p-8 overflow-hidden">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
@@ -764,5 +780,6 @@ export default function Home() {
         
       </section>
     </main>
+    
   );
 }

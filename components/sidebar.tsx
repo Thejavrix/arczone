@@ -1,178 +1,266 @@
 "use client";
 
-import { useState } from "react";
-
 import {
   LayoutDashboard,
   CreditCard,
   Repeat,
   Settings,
   PanelLeftClose,
-  PanelLeftOpen,
+  Menu,
+  X,
 } from "lucide-react";
 
-const items = [
-  {
-    id: "dashboard",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-  },
+import { useState } from "react";
 
-  {
-    id: "payments",
-    label: "Payments",
-    icon: CreditCard,
-  },
-
-  {
-    id: "subscriptions",
-    label: "Subscriptions",
-    icon: Repeat,
-  },
-
-  {
-    id: "settings",
-    label: "Settings",
-    icon: Settings,
-  },
-];
+interface SidebarProps {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+}
 
 export function Sidebar({
   activeTab,
   setActiveTab,
-}: {
-  activeTab: string;
-
-  setActiveTab: (
-    tab: string
-  ) => void;
-}) {
+}: SidebarProps) {
   const [collapsed, setCollapsed] =
     useState(false);
 
-  return (
-    <aside
-      className={`rounded-4xl border border-black/5 bg-white shadow-sm p-5 flex flex-col transition-all duration-300 ${
-        collapsed
-          ? "w-full lg:w-22"
-          : "w-full lg:w-65"
-      }`}
-    >
-      <div className="flex items-center justify-between">
-        {!collapsed && (
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              ARCZONE
-            </h1>
+  const [mobileOpen, setMobileOpen] =
+    useState(false);
 
-            <p className="text-xs text-black/40 mt-1">
-              ARC Payment Infrastructure
-            </p>
-          </div>
-        )}
+  const navItems = [
+    {
+      label: "Dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      label: "Payments",
+      icon: CreditCard,
+    },
+    {
+      label: "Subscriptions",
+      icon: Repeat,
+      disabled: true,
+    },
+    {
+      label: "Settings",
+      icon: Settings,
+    },
+  ];
+
+  return (
+    <>
+      {/* MOBILE TOPBAR */}
+
+      <div className="lg:hidden mb-5 flex items-center justify-between rounded-[28px] border border-black/5 bg-white p-5 shadow-sm">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            ARCZONE
+          </h1>
+
+          <p className="mt-1 text-xs text-black/40">
+            ARC Payment Infrastructure
+          </p>
+        </div>
 
         <button
           onClick={() =>
-            setCollapsed(!collapsed)
+            setMobileOpen(true)
           }
-          className="h-10 w-10 rounded-2xl bg-neutral-100 border border-black/5 flex items-center justify-center hover:bg-neutral-200 transition-colors"
+          className="flex h-12 w-12 items-center justify-center rounded-2xl border border-black/5 bg-neutral-100"
         >
-          {collapsed ? (
-            <PanelLeftOpen size={18} />
-          ) : (
-            <PanelLeftClose size={18} />
-          )}
+          <Menu size={22} />
         </button>
       </div>
 
-      <div className="mt-10 flex flex-col gap-2">
-        {items.map((item) => {
-          const Icon = item.icon;
+      {/* MOBILE OVERLAY */}
 
-          return (
-            <SidebarItem
-              key={item.id}
-              icon={
-                <Icon size={18} />
-              }
-              label={item.label}
-              active={
-                activeTab ===
-                item.id
-              }
-              collapsed={
-                collapsed
-              }
-              onClick={() =>
-                setActiveTab(
-                  item.id
-                )
-              }
-            />
-          );
-        })}
-      </div>
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm lg:hidden">
+          <div className="h-full w-[82%] max-w-[320px] overflow-y-auto border-r border-black/5 bg-white p-5 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-semibold tracking-tight">
+                  ARCZONE
+                </h1>
 
-      {!collapsed && (
-        <div className="mt-auto pt-6">
-          <div className="rounded-3xl border border-black/5 bg-neutral-50 p-4">
-            <p className="text-xs text-black/40">
-              ARC Network
-            </p>
+                <p className="mt-1 text-xs text-black/40">
+                  ARC Payment Infrastructure
+                </p>
+              </div>
 
-            <h3 className="mt-2 font-semibold">
-              Testnet Active
-            </h3>
+              <button
+                onClick={() =>
+                  setMobileOpen(false)
+                }
+                className="flex h-11 w-11 items-center justify-center rounded-2xl border border-black/5 bg-neutral-100"
+              >
+                <X size={20} />
+              </button>
+            </div>
 
-            <p className="mt-2 text-xs text-black/50 leading-relaxed">
-              Stablecoin payment
-              infrastructure built
-              on ARC.
-            </p>
+            <div className="mt-10 flex flex-col gap-3">
+              {navItems.map((item) => {
+                const Icon = item.icon;
+
+                const active =
+                  activeTab === item.label;
+
+                return (
+                  <button
+                    key={item.label}
+                    disabled={item.disabled}
+                    onClick={() => {
+                      if (item.disabled)
+                        return;
+
+                      setActiveTab(
+                        item.label
+                      );
+
+                      setMobileOpen(
+                        false
+                      );
+                    }}
+                    className={`flex items-center gap-4 rounded-3xl px-5 py-4 text-left transition-all ${
+                      active
+                        ? "bg-black text-white"
+                        : item.disabled
+                        ? "bg-neutral-100 text-black/30"
+                        : "hover:bg-neutral-100 text-black/70"
+                    }`}
+                  >
+                    <Icon size={20} />
+
+                    <div>
+                      <p className="font-medium">
+                        {item.label}
+                      </p>
+
+                      {item.disabled && (
+                        <p className="text-xs mt-1">
+                          Coming Soon
+                        </p>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mt-10 rounded-[32px] border border-black/5 bg-neutral-50 p-6">
+              <p className="text-sm text-black/40">
+                ARC Network
+              </p>
+
+              <h3 className="mt-3 text-2xl font-semibold">
+                Testnet Active
+              </h3>
+
+              <p className="mt-3 text-sm leading-relaxed text-black/50">
+                Stablecoin payment infrastructure built on ARC.
+              </p>
+            </div>
           </div>
         </div>
       )}
-    </aside>
-  );
-}
 
-function SidebarItem({
-  icon,
-  label,
-  active,
-  collapsed,
-  onClick,
-}: {
-  icon: React.ReactNode;
+      {/* DESKTOP SIDEBAR */}
 
-  label: string;
+      <aside
+  className={`hidden lg:flex rounded-4xl border border-black/5 bg-white shadow-sm p-5 flex-col transition-[width] duration-300 ${
+    collapsed ? "w-22" : "w-65"
+  }`}
+>
+        <div className="flex items-center justify-between">
+          {!collapsed && (
+            <div>
+              <h1 className="text-3xl font-semibold tracking-tight">
+                ARCZONE
+              </h1>
 
-  active?: boolean;
+              <p className="mt-2 text-sm text-black/40">
+                ARC Payment Infrastructure
+              </p>
+            </div>
+          )}
 
-  collapsed?: boolean;
+          <button
+            onClick={() =>
+              setCollapsed(!collapsed)
+            }
+            className="flex h-14 w-14 items-center justify-center rounded-3xl border border-black/5 bg-neutral-100 hover:bg-neutral-200 transition-colors"
+          >
+            <PanelLeftClose
+              size={22}
+            />
+          </button>
+        </div>
 
-  onClick?: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex items-center ${
-        collapsed
-          ? "justify-center"
-          : "gap-3"
-      } rounded-2xl px-4 py-3 transition-all ${
-        active
-          ? "bg-black text-white shadow-sm"
-          : "hover:bg-neutral-100 text-black/70"
-      }`}
-    >
-      {icon}
+        <div className="mt-10 flex flex-col gap-3">
+          {navItems.map((item) => {
+            const Icon = item.icon;
 
-      {!collapsed && (
-        <span className="font-medium">
-          {label}
-        </span>
-      )}
-    </button>
+            const active =
+              activeTab === item.label;
+
+            return (
+              <button
+                key={item.label}
+                disabled={item.disabled}
+                onClick={() => {
+                  if (item.disabled)
+                    return;
+
+                  setActiveTab(item.label);
+                }}
+                className={`flex items-center ${
+                  collapsed
+                    ? "justify-center"
+                    : "gap-4"
+                } rounded-3xl px-5 py-4 transition-all ${
+                  active
+                    ? "bg-black text-white"
+                    : item.disabled
+                    ? "bg-neutral-100 text-black/30"
+                    : "hover:bg-neutral-100 text-black/70"
+                }`}
+              >
+                <Icon size={20} />
+
+                {!collapsed && (
+                  <div className="text-left">
+                    <p className="font-medium">
+                      {item.label}
+                    </p>
+
+                    {item.disabled && (
+                      <p className="text-xs mt-1">
+                        Coming Soon
+                      </p>
+                    )}
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+
+        {!collapsed && (
+          <div className="mt-auto rounded-[32px] border border-black/5 bg-neutral-50 p-6">
+            <p className="text-sm text-black/40">
+              ARC Network
+            </p>
+
+            <h3 className="mt-3 text-3xl font-semibold tracking-tight">
+              Testnet Active
+            </h3>
+
+            <p className="mt-4 text-sm leading-relaxed text-black/50">
+              Stablecoin payment infrastructure built on ARC.
+            </p>
+          </div>
+        )}
+      </aside>
+    </>
   );
 }
