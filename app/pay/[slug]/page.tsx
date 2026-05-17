@@ -106,26 +106,37 @@ export default function PayPage() {
     }
 
     async function markCompleted() {
-      if (!payment) return;
+  const currentPayment =
+    payment;
 
-const { error } =
-  await supabase
-    .from("payments")
-    .update({
-      status: "completed",
-      tx_hash: localTxHash,
-      completed_at:
-        new Date().toISOString(),
-    })
-    .eq("slug", payment.slug);
+  if (!currentPayment)
+    return;
 
-      if (error) {
-        toast.error(
-          "Failed to update payment"
-        );
+  const { error } =
+    await supabase
+      .from("payments")
+      .update({
+        status: "completed",
 
-        return;
-      }
+        tx_hash:
+          localTxHash,
+
+        completed_at:
+          new Date().toISOString(),
+      })
+      .eq(
+        "slug",
+        currentPayment.slug
+      );
+
+  if (error) {
+    toast.error(
+      "Failed to update payment"
+    );
+
+    return;
+  }
+
 
       setPayment((prev: any) => ({
         ...prev,
