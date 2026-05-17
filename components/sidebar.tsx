@@ -121,15 +121,22 @@ export function Sidebar({
                         false
                       );
                     }}
-                    className={`flex items-center gap-4 rounded-3xl px-5 py-4 text-left transition-all ${
-                      active
-                        ? "bg-black text-white"
-                        : item.disabled
-                        ? "bg-neutral-100 text-black/30"
-                        : "hover:bg-neutral-100 text-black/70"
-                    }`}
+                    className={`flex items-center ${
+  collapsed
+    ? "justify-center px-0"
+    : "gap-4 px-5"
+} rounded-3xl py-4 transition-all w-full ${
+  active
+    ? "bg-black text-white"
+    : item.disabled
+    ? "bg-neutral-100 text-black/30"
+    : "hover:bg-neutral-100 text-black/70"
+}`}
                   >
-                    <Icon size={20} />
+                    <Icon
+  size={20}
+  className="shrink-0"
+/>
 
                     <div>
                       <p className="font-medium">

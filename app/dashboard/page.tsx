@@ -156,19 +156,7 @@ export default function Home() {
 
   return (
     <main className="flex flex-col lg:flex-row min-h-screen p-3 lg:p-4 gap-4 bg-[#F5F7FB]">
-      <div className="lg:hidden mb-5 flex items-center justify-between rounded-[28px] border border-black/5 bg-white p-5 shadow-sm">
-  <div>
-    <h1 className="text-2xl font-semibold tracking-tight">
-      ARCZONE
-    </h1>
-
-    <p className="mt-1 text-xs text-black/40">
-      ARC Payment Infrastructure
-    </p>
-  </div>
-
-  <ConnectButton />
-</div>
+      
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
