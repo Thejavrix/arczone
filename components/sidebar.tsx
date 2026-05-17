@@ -175,7 +175,9 @@ export function Sidebar({
 
       <aside
   className={`hidden lg:flex rounded-4xl border border-black/5 bg-white shadow-sm p-5 flex-col transition-[width] duration-300 ${
-    collapsed ? "w-22" : "w-65"
+    collapsed
+  ? "w-[88px]"
+  : "w-[280px]"
   }`}
 >
         <div className="flex items-center justify-between">
