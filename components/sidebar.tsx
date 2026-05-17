@@ -123,9 +123,9 @@ export function Sidebar({
                     }}
                     className={`flex items-center ${
   collapsed
-    ? "justify-center px-0"
+    ? "justify-center px-2"
     : "gap-4 px-5"
-} rounded-3xl py-4 transition-all w-full ${
+} rounded-3xl py-3 transition-all w-full ${
   active
     ? "bg-black text-white"
     : item.disabled
@@ -133,10 +133,12 @@ export function Sidebar({
     : "hover:bg-neutral-100 text-black/70"
 }`}
                   >
-                    <Icon
-  size={20}
-  className="shrink-0"
-/>
+                    <div className="flex h-10 w-10 items-center justify-center">
+  <Icon
+    size={22}
+    className="shrink-0"
+  />
+</div>
 
                     <div>
                       <p className="font-medium">
@@ -176,7 +178,7 @@ export function Sidebar({
       <aside
   className={`hidden lg:flex rounded-4xl border border-black/5 bg-white shadow-sm p-5 flex-col transition-[width] duration-300 ${
     collapsed
-  ? "w-[88px]"
+  ? "w-[96px]"
   : "w-[280px]"
   }`}
 >

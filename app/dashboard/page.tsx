@@ -36,7 +36,7 @@ export default function Home() {
     
 
   const [activeTab, setActiveTab] =
-    useState("dashboard");
+    useState("Dashboard");
 
   const [open, setOpen] =
     useState(false);
@@ -77,18 +77,27 @@ export default function Home() {
 
   useEffect(() => {
     async function loadPayments() {
-      const { data, error } =
-        await supabase
-          .from("payments")
-          .select("*")
-          .order("created_at", {
-            ascending: false,
-          });
+  if (!address) {
+    setSavedPayments([]);
+    return;
+  }
 
-      if (!error && data) {
-        setSavedPayments(data);
-      }
-    }
+  const { data, error } =
+    await supabase
+      .from("payments")
+      .select("*")
+      .eq(
+        "merchant_address",
+        address
+      )
+      .order("created_at", {
+        ascending: false,
+      });
+
+  if (!error && data) {
+    setSavedPayments(data);
+  }
+}
 
     loadPayments();
   }, []);
@@ -124,31 +133,38 @@ export default function Home() {
     });
 
   const totalRevenue =
-    savedPayments
-      .filter(
+  address
+    ? savedPayments
+        .filter(
+          (p) =>
+            p.status ===
+            "completed"
+        )
+        .reduce(
+          (acc, p) =>
+            acc +
+            Number(p.amount),
+          0
+        )
+    : 0;
+
+const completedPayments =
+  address
+    ? savedPayments.filter(
         (p) =>
           p.status ===
           "completed"
-      )
-      .reduce(
-        (acc, p) =>
-          acc + Number(p.amount),
-        0
-      );
+      ).length
+    : 0;
 
-  const completedPayments =
-    savedPayments.filter(
-      (p) =>
-        p.status ===
-        "completed"
-    ).length;
-
-  const pendingPayments =
-    savedPayments.filter(
-      (p) =>
-        p.status !==
-        "completed"
-    ).length;
+const pendingPayments =
+  address
+    ? savedPayments.filter(
+        (p) =>
+          p.status !==
+          "completed"
+      ).length
+    : 0;
 
   if (!mounted) {
     return null;
@@ -435,7 +451,7 @@ export default function Home() {
           </div>
         </div>
 
-        {activeTab === "dashboard" && (
+        {activeTab === "Dashboard" && (
           <>
             <div className="grid md:grid-cols-3 gap-5 mt-10">
               <GlassCard
@@ -565,7 +581,7 @@ export default function Home() {
           </>
         )}
 
-        {activeTab === "payments" && (
+        {activeTab === "Payments" && (
           <div className="mt-8 rounded-[32px] border border-black/5 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between">
               <div>
@@ -657,7 +673,7 @@ export default function Home() {
         )}
 
         {activeTab ===
-          "settings" && (
+          "Settings" && (
           <div className="mt-8 rounded-[32px] border border-black/5 bg-white p-8 shadow-sm">
             <p className="text-sm text-black/50">
               Merchant Settings
